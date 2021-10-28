@@ -1,7 +1,7 @@
 {
-  "name": "typescript-library-template",
-  "version": "1.0.0",
-  "description": "",
+  "name": "casper-wallet-connector",
+  "version": "0.0.1",
+  "description": "lib to connect with casper's wallets",
   "private": true,
   "keywords": [
     "typescript"
@@ -23,15 +23,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/.../...git"
+    "url": "https://github.com/djhahe/casper-wallet-connector.git"
   },
   "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/.../.../issues"
+  "homepage": "https://github.com/djhahe/casper-wallet-connector",
+  "dependencies": {
+    "casper-js-sdk": "^2.6.2",
+    "eventemitter3": "^4.0.7"
   },
-  "homepage": "https://github.com/.../...",
-  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.4",
     "rimraf": "^3.0.2",
