@@ -116,6 +116,15 @@ export default class Wallet extends EventEmitter {
 			window.removeEventListener('message', this.handleMessage);
 			window.removeEventListener('beforeunload', this.beforeUnload);
 		}
+		if (this.publicKeyHex) {
+			this._publicKeyHex = null;
+			this.emit('disconnect');
+		}
+
+		this._response.forEach(([, reject], id) => {
+			this._response.delete(id);
+			reject(new Error('Wallet disconnected'));
+		});
 	};
 
 	handleMessage = (

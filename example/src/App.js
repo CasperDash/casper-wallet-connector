@@ -1,37 +1,38 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Wallet from 'casper-wallet-connector';
 import './App.css';
 
 const App = () => {
 	const network = 'testnet';
-	const [providerUrl, setProviderUrl] = useState('https://casperdash.io');
+	const [providerUrl, setProviderUrl] = useState('http://localhost:3000/connector');
 	const [selectedWallet, setSelectedWallet] = useState(null);
-	const [connected, setConnected] = useState(false);
-	const [logs, setLog] = useState([]);
-	const addLog = useCallback(
-		(message) => {
-			setLog([...logs, message]);
-		},
-		[logs],
-	);
+	const [logs, setLogs] = useState([]);
+	const addLog = (message) => {
+		setLogs(logs.concat(message));
+	};
+
 	useEffect(() => {
 		if (selectedWallet) {
-			selectedWallet.on('connect', () => {
-				setConnected(true);
-				addLog(`Connected to wallet ${selectedWallet.publicKey ?? '--'}`);
-			});
-			selectedWallet.on('disconnect', () => {
-				setConnected(false);
-				addLog('Disconnected from wallet');
-			});
-			selectedWallet.connect();
 			return () => {
 				selectedWallet.disconnect();
 			};
 		}
-	}, [selectedWallet, addLog]);
+	}, [selectedWallet]);
 
-	const urlWallet = useMemo(() => new Wallet(providerUrl, network), [providerUrl, network]);
+	const onConnectWallet = () => {
+		const urlWallet = new Wallet(providerUrl, network);
+
+		if (!urlWallet.connected) {
+			urlWallet.connect();
+		}
+		urlWallet.on('connect', () => {
+			addLog(`Connected to wallet ${urlWallet.publicKeyHex || '--'}`);
+		});
+		urlWallet.on('disconnect', () => {
+			addLog('Disconnected from wallet');
+		});
+		setSelectedWallet(urlWallet);
+	};
 
 	return (
 		<div className="App">
@@ -39,10 +40,20 @@ const App = () => {
 			<h3>Network : {network}</h3>
 			<div>
 				Wallet Provider:{' '}
-				<input type="text" value={providerUrl} onChange={(e) => setProviderUrl(e.target.value)}></input>
+				<input
+					style={{ width: 400 }}
+					type="text"
+					value={providerUrl}
+					onChange={(e) => setProviderUrl(e.target.value)}
+				></input>
 			</div>
 			<div>
-				<button onClick={() => setSelectedWallet(urlWallet)}>Connect to Wallet</button>
+				{(!selectedWallet || !selectedWallet.connected) && (
+					<button onClick={onConnectWallet}>Connect to Wallet</button>
+				)}
+				{selectedWallet && selectedWallet.connected && (
+					<button onClick={() => selectedWallet.disconnect()}>Disconnect</button>
+				)}
 				{logs.map((l, i) => (
 					<div key={i}>{l}</div>
 				))}
