@@ -4,7 +4,7 @@ import './App.css';
 
 const App = () => {
 	const network = 'testnet';
-	const [providerUrl, setProviderUrl] = useState('http://localhost:3000/connector');
+	const [providerUrl, setProviderUrl] = useState('https://testnet.casperdash.io/connector');
 	const [selectedWallet, setSelectedWallet] = useState(null);
 	const [logs, setLogs] = useState([]);
 	const addLog = (message) => {
@@ -34,6 +34,8 @@ const App = () => {
 		setSelectedWallet(urlWallet);
 	};
 
+	const signDeploy = () => {};
+
 	return (
 		<div className="App">
 			<h1>Wallet connector</h1>
@@ -52,7 +54,10 @@ const App = () => {
 					<button onClick={onConnectWallet}>Connect to Wallet</button>
 				)}
 				{selectedWallet && selectedWallet.connected && (
-					<button onClick={() => selectedWallet.disconnect()}>Disconnect</button>
+					<>
+						<button onClick={signDeploy}>Sign Deploy</button>
+						<button onClick={() => selectedWallet.disconnect()}>Disconnect</button>
+					</>
 				)}
 				{logs.map((l, i) => (
 					<div key={i}>{l}</div>
